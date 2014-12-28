@@ -1,9 +1,10 @@
 {
   open  Parser
+  exception Err
 }
 
 rule lexmain = parse
-      [' ' '\t' '\n']+ {lexmain lexbuf}
+      [' ' '\t' ]+ {lexmain lexbuf}
   | "(" {Parser.LPAREN}
   | ")" {Parser.RPAREN}
   | ";;" {Parser.SEMISEMI}
@@ -13,3 +14,4 @@ rule lexmain = parse
   | "/" {Parser.DIV}
   | ['0'-'9']+ {Parser.INTV (int_of_string (Lexing.lexeme lexbuf))}
   | eof {exit 0}
+  | ['\n'] {raise Err}
