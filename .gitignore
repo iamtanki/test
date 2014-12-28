@@ -1,0 +1,16 @@
+[#]*[#]
+*.[oa]
+*.aux
+*.bbl
+*~
+*.blg
+*.pdf
+*.dvi
+*.log
+*.cmo
+*.output
+*.cmx
+*.cmi
+*.depend
+*.gz
+*.#*
