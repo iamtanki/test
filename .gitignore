@@ -14,5 +14,7 @@
 *.depend
 *.gz
 *.#*
-*parser.ml[i]?
+*parser.ml
+*parser.mli
 miniml
+*lexer.ml
