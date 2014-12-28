@@ -14,3 +14,5 @@
 *.depend
 *.gz
 *.#*
+*parser.ml[i]?
+miniml
