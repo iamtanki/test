@@ -14,9 +14,6 @@ type exp =
 type program =
     Exp of exp
 
+
 (* types *)
 type tyexp = TyInt | TyBool
-
-let print_ty ty= match ty with
-  | TyInt -> print_string "int"
-  | TyBool -> print_string "bool"

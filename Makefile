@@ -10,7 +10,7 @@ OCAMLOPTFLAGS=$(INCLUDES) # add other options for ocamlopt here
 PROGNAME=miniml
 
 # The list of object files for prog1
-OBJS=parser.cmo lexer.cmo calc.cmo
+OBJS=syntax.cmo parser.cmo lexer.cmo eval.cmo main.cmo
 
 DEPEND += lexer.ml parser.ml
 

@@ -20,14 +20,14 @@
    %%
 
 startpart :
-   LAExpr SEMISEMI {  $1 }
-
-LAExpr :
-    LAExpr AND LOExpr {BinOp (And , $1, $3)}
-    | LOExpr { $1 }
+   LOExpr SEMISEMI {  Exp $1 }
 
 LOExpr :
-    LOExpr OR LTExpr {BinOp (Or, $1, $3)}
+    LOExpr OR LAExpr {BinOp (Or , $1, $3)}
+    | LAExpr { $1 }
+
+LAExpr :
+    LAExpr AND LTExpr {BinOp (And, $1, $3)}
     | LTExpr { $1 }
 
 LTExpr:
@@ -46,12 +46,12 @@ MExpr :
     | SExpr { $1 }
 
 SExpr :
-        NOT  SExpr { SingleOp (Not, $1)}
+        NOT  SExpr { SingleOp (Not, $2)}
     | VExpr { $1 }
 
 VExpr :
-        INTV  {intV $1}
+        INTV  {IntV $1}
     | TRUE {BoolV true}
     | FALSE {BoolV false}
     | ID { Var $1}
-    | LPAREN LAExpr RPAREN { $2 }
+    | LPAREN LOExpr RPAREN { $2 }
