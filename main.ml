@@ -11,19 +11,31 @@ let print_ty ty = match ty with
   | TyInt -> print_string "int"
   | TyBool -> print_string "bool"
 
+let read_file s =
+  let ic = open_in "program.txt" in
+  try
+    while true do
+      let line = input_line ic in
+      s := (!s) ^ line;
+    done
+  with
+    _ -> close_in ic
+
 let rec print_value () =
   try
-    let lb = Lexing.from_channel stdin in
-    print_string "#" ;
+    let s = ref  "" in
+    read_file s;
+    let lb = Lexing.from_string !s in
+    print_string "# " ;
     flush stdout;
     let exp = Parser.startpart Lexer.main lb in
     let v = eval_program exp in
     let ty = ty_program exp in
-    print_string  "Val : ";  print_ty ty; print_string " = ";  print_v v;
+    print_string  " val : ";  print_ty ty; print_string " = ";  print_v v;
     print_newline ();
-    print_value ();
+    (* print_value (); *)
   with
-    Err e -> print_string e; print_newline (); print_value ()
-  | _ -> print_string "Not Complete"; print_newline (); print_value ()
+    Err e -> print_string e; print_newline ()
+    | _ -> print_string "Not Complete"; print_newline ()
 
 let _ = print_value ()
