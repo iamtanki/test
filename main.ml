@@ -1,5 +1,6 @@
 open Syntax
 open Eval
+open Typing
 
 let print_v exp =
   match exp with
@@ -17,12 +18,12 @@ let rec print_value () =
     flush stdout;
     let exp = Parser.startpart Lexer.main lb in
     let v = eval_program exp in
-    print_string "the value is :  "; print_v v;
+    let ty = ty_program exp in
+    print_string  "Val : ";  print_ty ty; print_string " = ";  print_v v;
     print_newline ();
     print_value ();
   with
-    EvalError -> print_string "Operator Error"; print_newline ();print_value ()
-  | DividedZero -> print_string "Divided Zero"; print_newline (); print_value ()
-  |  _ -> print_string "Something wrong"; print_newline (); print_value ()
+    Err e -> print_string e; print_newline (); print_value ()
+  | _ -> print_string "Not Complete"; print_newline (); print_value ()
 
 let _ = print_value ()

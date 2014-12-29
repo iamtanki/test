@@ -1,3 +1,5 @@
+exception Err of string;;
+
 type id = string
 
 type binOp = Plus | Minus | Times | Div | And | Or | Lt | Eq | Gt

@@ -20,7 +20,14 @@
    %%
 
 startpart :
-   LOExpr SEMISEMI {  Exp $1 }
+   TOPExpr SEMISEMI {  Exp $1 }
+
+TOPExpr :
+     IFExpr { $1 }
+
+IFExpr :
+    IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
+    | LOExpr { $1 }
 
 LOExpr :
     LOExpr OR LAExpr {BinOp (Or , $1, $3)}
