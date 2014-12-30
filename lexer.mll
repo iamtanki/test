@@ -5,7 +5,9 @@
       ("then", Parser.THEN);
       ("else", Parser.ELSE);
       ("true", Parser.TRUE);
-      ("false", Parser.FALSE)
+      ("false", Parser.FALSE);
+      ("let", Parser.LET);
+      ("IN", Parser.IN)
     ]
 }
 rule main = parse
@@ -28,6 +30,7 @@ rule main = parse
 | ">" { Parser.GT}
 | "<" { Parser.LT }
 | "==" {Parser.EQ} (* logic eq, not assignment *)
+| "=" { Parser.DEQ} (* assignment *)
 
 | ['a'-'z'] ['a'-'z' '0'-'9' '_' '\'']*
     { let id = Lexing.lexeme lexbuf in

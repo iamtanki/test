@@ -10,6 +10,8 @@
 %token LT EQ GT
 %token NOT
 
+%token LET IN DEQ
+
 %token<Syntax.id> ID
 %token <int> INTV
 %token <bool> BOOLV
@@ -21,9 +23,14 @@
 
 startpart :
    TOPExpr SEMISEMI {  Exp $1 }
+   | LET ID DEQ TOPExpr SEMISEMI { Decl ($1, $4) }
 
 TOPExpr :
      IFExpr { $1 }
+   | LetExpr { $1 }
+
+LetExpr :
+   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
 
 IFExpr :
     IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}

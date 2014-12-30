@@ -12,10 +12,11 @@ type exp =
   | BinOp of binOp * exp * exp
   | SingleOp of singleOp * exp
   | IfExp of exp * exp * exp
+  | LetExp of id * exp * exp
 
 type program =
     Exp of exp
-
+  | Decl of id * exp
 
 (* types *)
 type tyexp = TyInt | TyBool
