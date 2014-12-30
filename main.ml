@@ -1,6 +1,7 @@
 open Syntax
 open Eval
 open Typing
+open Environment
 
 let print_v exp =
   match exp with
@@ -21,21 +22,24 @@ let read_file s =
   with
     _ -> close_in ic
 
-let rec print_value () =
+let rec print_value env tyenv =
   try
-    let s = ref  "" in
-    read_file s;
-    let lb = Lexing.from_string !s in
+    (* let s = ref  "" in *)
+    (* read_file s; *)
+    let lb = Lexing.from_channel stdin in
     print_string "# " ;
     flush stdout;
     let exp = Parser.startpart Lexer.main lb in
-    let v = eval_program exp in
-    let ty = ty_program exp in
-    print_string  " val : ";  print_ty ty; print_string " = ";  print_v v;
+    let (s, v , newenv) = eval_program exp env in
+    let (ts, tv, newtyenv) = ty_program exp tyenv in
+    print_string  (s ^ " : " ) ;
+    print_ty tv;
+    print_string " = ";
+    print_v v;
     print_newline ();
-    (* print_value (); *)
+    print_value newenv newtyenv;
   with
-    Err e -> print_string e; print_newline ()
-    | _ -> print_string "Not Complete"; print_newline ()
+    Err e -> print_string e; print_newline ();     print_value env tyenv
+    | _ -> print_string "Not Complete"; print_newline ();    print_value env tyenv
 
-let _ = print_value ()
+let _ = print_value Environment.empty Environment.empty

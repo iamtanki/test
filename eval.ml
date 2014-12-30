@@ -24,7 +24,7 @@ let eval_singleop op exp = match op,exp with
   | Not, IntV a -> if a = 0 then BoolV (true) else BoolV (false)
 
 let rec eval_exp exp env = match exp with
-    Var id -> try Environment.lookup id env with Err e -> raise (Err (e ^ ": " ^ id))
+    Var id ->( try Environment.lookup id env with Err e -> raise (Err (e ^ " : " ^ id)))
   | IntV a -> IntV a
   | BoolV a -> BoolV a
   | BinOp (op, e1, e2) -> let arg1 = eval_exp e1 env in
@@ -39,8 +39,8 @@ let rec eval_exp exp env = match exp with
                            | _ -> raise (Err ("The expression must be boolean: if "))
                            )
   | LetExp (id, e1, e2) -> let arg1 = eval_exp e1 env in
-                           eval_exp e2 ( Environment.extend id arg1)
+                           eval_exp e2 ( Environment.extend id arg1 env)
 
 let eval_program pro env = match pro with
-    Exp e -> eval_exp e env
-  | Decl (id, e) -> let v = eval_exp e in Environment.extend id v env; v
+    Exp e -> let v =  eval_exp e env in (" - ", v , env)
+  | Decl (id, e) -> let v = eval_exp e env in (id, v, Environment.extend id v env)

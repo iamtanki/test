@@ -23,7 +23,7 @@
 
 startpart :
    TOPExpr SEMISEMI {  Exp $1 }
-   | LET ID DEQ TOPExpr SEMISEMI { Decl ($1, $4) }
+   | LET ID DEQ TOPExpr SEMISEMI { Decl ($2, $4) }
 
 TOPExpr :
      IFExpr { $1 }
