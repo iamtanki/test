@@ -29,13 +29,6 @@ TOPExpr :
      IFExpr { $1 }
    | LetExpr { $1 }
 
-LetExpr :
-   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
-
-IFExpr :
-    IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
-    | LOExpr { $1 }
-
 LOExpr :
     LOExpr OR LAExpr {BinOp (Or , $1, $3)}
     | LAExpr { $1 }
@@ -68,4 +61,11 @@ VExpr :
     | TRUE {BoolV true}
     | FALSE {BoolV false}
     | ID { Var $1}
-    | LPAREN LOExpr RPAREN { $2 }
+    | LPAREN TOPExpr RPAREN { $2 }
+
+LetExpr :
+   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
+
+IFExpr :
+    IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
+    | LOExpr { $1 }
