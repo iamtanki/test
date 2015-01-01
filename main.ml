@@ -27,6 +27,7 @@ let rec print_value env tyenv =
     (* let s = ref  "" in *)
     (* read_file s; *)
     let lb = Lexing.from_channel stdin in
+    (* let lb = Lexing.from_string !s in *)
     print_string "# " ;
     flush stdout;
     let exp = Parser.startpart Lexer.main lb in
@@ -37,8 +38,9 @@ let rec print_value env tyenv =
     print_string " = ";
     print_v v;
     print_newline ();
-    print_value newenv newtyenv;
+    print_value newenv newtyenv
   with
     Err e -> print_string e; print_newline ();     print_value env tyenv
     | _ -> print_string "Parsing Error: Not Complete";  print_newline ();  print_value env tyenv
+
 let _ = print_value Environment.empty Environment.empty

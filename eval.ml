@@ -47,7 +47,8 @@ let rec eval_exp exp env = match exp with
 
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in
-                             (id, v, Environment.extend id v env)
+                             let newenv = Environment.extend id v env in
+                             (id, v, newenv)
   | CompAndDecl (id, e1,e2) -> let v = eval_exp e1 env in
                                let (nid, nv, newenv) =  eval_anddecl e2 env in
                                if id = nid then raise (Err "Error: identifier is the same !") else
@@ -61,10 +62,9 @@ let rec eval_decl  exp env = match exp with
                              eval_decl e2 newenv
   | AndDecl (id, e1, e2) -> let v = eval_exp e1 env in
                             let (nid, nv , nenv)  =  eval_anddecl e2 env in
-                            if id = nid then raise (Err "Error: identifier is the same !") else
-                            (id, v, Environment.extend id v nenv)
-
+                             let newenv = Environment.extend id v nenv in
+                             (id, v, newenv)
 
 let eval_program pro env = match pro with
     Exp e -> let v =  eval_exp e env in (" - ", v , env)
-  | Decl e  -> let  (id, v, newenv) = (eval_decl e env) in (id, v, newenv)
+  | Decl e  -> eval_decl e env
