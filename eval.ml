@@ -41,6 +41,13 @@ let rec eval_exp exp env = match exp with
   | LetExp (id, e1, e2) -> let arg1 = eval_exp e1 env in
                            eval_exp e2 ( Environment.extend id arg1 env)
 
+let rec eval_decl  exp env = match exp with
+    SingleDecl (id, e) -> let arg = eval_exp e env in
+                          (id, arg, Environment.extend id arg env)
+  | CompDecl (id, e1, e2) -> let arg1 = eval_exp e1 env in
+                             let newenv = Environment.extend id arg1 env in
+                             eval_decl e2 newenv
+
 let eval_program pro env = match pro with
     Exp e -> let v =  eval_exp e env in (" - ", v , env)
-  | Decl (id, e) -> let v = eval_exp e env in (id, v, Environment.extend id v env)
+  | Decl e  -> let  (id, v, newenv) = (eval_decl e env) in (id, v, newenv)

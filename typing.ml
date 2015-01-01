@@ -39,6 +39,13 @@ let rec  ty_exp exp tyenv = match exp with
   | LetExp (id, e1, e2) -> let arg1 = ty_exp e1 tyenv in
                            ty_exp e2 (Environment.extend id arg1 tyenv)
 
+let rec ty_decl exp tyenv = match exp with
+    SingleDecl (id, e) -> let arg = ty_exp e tyenv in
+                          (id, arg, Environment.extend id arg tyenv)
+  | CompDecl (id, e1, e2) -> let arg = ty_exp e1 tyenv in
+                             let newtyenv = Environment.extend id arg tyenv in
+                             ty_decl e2 newtyenv
+
 let ty_program pro tyenv =match pro with
     Exp e -> let v = ty_exp e tyenv in (" - ", v, tyenv)
-  | Decl (id, e) -> let v = ty_exp e tyenv in (id,v, Environment.extend id v tyenv)
+  | Decl e -> let (id, v, newtyenv) = ty_decl e tyenv in (id,v,newtyenv)

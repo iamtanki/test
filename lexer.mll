@@ -31,6 +31,7 @@ rule main = parse
 | "<" { Parser.LT }
 | "==" {Parser.EQ} (* logic eq, not assignment *)
 | "=" { Parser.DEQ} (* assignment *)
+| "(*" { comments 0 lexbuf  }
 
 | ['a'-'z'] ['a'-'z' '0'-'9' '_' '\'']*
     { let id = Lexing.lexeme lexbuf in
@@ -40,3 +41,7 @@ rule main = parse
       _ -> Parser.ID id
      }
 | eof { exit 0 }
+and comments level = parse
+    | "*)" { if level = 0 then main lexbuf else comments (level - 1) lexbuf }
+    | "(*" { comments (level + 1) lexbuf }
+    | _ { comments level lexbuf }

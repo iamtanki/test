@@ -40,6 +40,5 @@ let rec print_value env tyenv =
     print_value newenv newtyenv;
   with
     Err e -> print_string e; print_newline ();     print_value env tyenv
-    (* | _ ->  print_newline ();    print_value env tyenv *)
-
+    | _ -> print_string "Parsing Error: Not Complete";  print_newline ();  print_value env tyenv
 let _ = print_value Environment.empty Environment.empty

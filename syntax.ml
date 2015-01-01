@@ -14,9 +14,13 @@ type exp =
   | IfExp of exp * exp * exp
   | LetExp of id * exp * exp
 
+type decl =
+    SingleDecl of id * exp
+  | CompDecl of id * exp * decl
+
 type program =
     Exp of exp
-  | Decl of id * exp
+  | Decl of decl
 
 (* types *)
 type tyexp = TyInt | TyBool

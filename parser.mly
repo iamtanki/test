@@ -9,7 +9,6 @@
 %token AND OR
 %token LT EQ GT
 %token NOT
-
 %token LET IN DEQ
 
 %token<Syntax.id> ID
@@ -23,11 +22,22 @@
 
 startpart :
    TOPExpr SEMISEMI {  Exp $1 }
-   | LET ID DEQ TOPExpr SEMISEMI { Decl ($2, $4) }
+    | DECL SEMISEMI{ Decl  $1 }
+
+DECL :
+    LET ID DEQ TOPExpr {SingleDecl ($2, $4)}
+    | LET ID DEQ TOPExpr DECL {CompDecl ($2, $4, $5)}
 
 TOPExpr :
      IFExpr { $1 }
    | LetExpr { $1 }
+
+LetExpr :
+   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
+
+IFExpr :
+    IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
+    | LOExpr { $1 }
 
 LOExpr :
     LOExpr OR LAExpr {BinOp (Or , $1, $3)}
@@ -62,10 +72,3 @@ VExpr :
     | FALSE {BoolV false}
     | ID { Var $1}
     | LPAREN TOPExpr RPAREN { $2 }
-
-LetExpr :
-   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
-
-IFExpr :
-    IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
-    | LOExpr { $1 }
