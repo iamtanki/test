@@ -38,6 +38,17 @@ let rec  ty_exp exp tyenv = match exp with
                         )
   | LetExp (id, e1, e2) -> let arg1 = ty_exp e1 tyenv in
                            ty_exp e2 (Environment.extend id arg1 tyenv)
+  |LetAndExp (id, exp, andexp, exp2) -> let v = ty_exp exp tyenv in
+                                        let (nid, nv, newtyenv) = ty_anddecl andexp tyenv in
+                                        if id = nid then raise (Err "Error: identifier is the same ") else
+                                        ty_exp exp2 newtyenv
+
+and ty_anddecl exp tyenv  = match exp with
+    SingleAndDecl (id, e) -> let v = ty_exp e tyenv in
+                             (id, v , Environment.extend id  v tyenv)
+  | CompAndDecl (id, e1,e2) -> let v = ty_exp e1 tyenv in
+                               let (nid, nv, newtyenv) = ty_anddecl e2 tyenv in
+                               (id,v, Environment.extend nid nv newtyenv)
 
 let rec ty_decl exp tyenv = match exp with
     SingleDecl (id, e) -> let arg = ty_exp e tyenv in
@@ -45,6 +56,9 @@ let rec ty_decl exp tyenv = match exp with
   | CompDecl (id, e1, e2) -> let arg = ty_exp e1 tyenv in
                              let newtyenv = Environment.extend id arg tyenv in
                              ty_decl e2 newtyenv
+  | AndDecl (id, e1,e2) -> let v = ty_exp e1 tyenv in
+                           let (nid, nv, newtyenv) = ty_anddecl e2 tyenv in
+                           (id, v, Environment.extend nid nv newtyenv)
 
 let ty_program pro tyenv =match pro with
     Exp e -> let v = ty_exp e tyenv in (" - ", v, tyenv)

@@ -7,7 +7,8 @@
       ("true", Parser.TRUE);
       ("false", Parser.FALSE);
       ("let", Parser.LET);
-      ("in", Parser.IN)
+      ("in", Parser.IN);
+        ("and", Parser.EAND)
     ]
 }
 rule main = parse

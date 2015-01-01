@@ -9,7 +9,7 @@
 %token AND OR
 %token LT EQ GT
 %token NOT
-%token LET IN DEQ
+%token LET IN DEQ EAND
 
 %token<Syntax.id> ID
 %token <int> INTV
@@ -27,13 +27,20 @@ startpart :
 DECL :
     LET ID DEQ TOPExpr {SingleDecl ($2, $4)}
     | LET ID DEQ TOPExpr DECL {CompDecl ($2, $4, $5)}
+    | LET ID DEQ TOPExpr  ANDDecl { AndDecl ($2, $4, $5)}
+
+ANDDecl :
+        EAND ID DEQ TOPExpr { SingleAndDecl ($2,$4)}
+    | EAND ID DEQ  TOPExpr ANDDecl {CompAndDecl ($2, $4, $5)}
+
 
 TOPExpr :
      IFExpr { $1 }
    | LetExpr { $1 }
 
 LetExpr :
-   LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
+       LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
+   | LET ID DEQ TOPExpr ANDDecl IN TOPExpr { LetAndExp ($2, $4, $5, $7)}
 
 IFExpr :
     IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
