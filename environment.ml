@@ -10,7 +10,7 @@ let lookup id env =
   try
     List.assoc id env
   with
-      _ -> raise (Err "Error: not found identifier from environment")
+      _ -> raise (Err " : not found identifier from environment")
 
 let rec map f = function
      [] -> []
