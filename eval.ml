@@ -1,32 +1,38 @@
 open Syntax
 
+type exval =
+    IntegerV of int
+  | BooleanV of bool
+  | FunctionV of id * exp * dnval Environment.t
+ and dnval = exval
+
 let eval_binop op e1 e2 = match op , e1, e2 with
-    Plus, IntV a, IntV b -> IntV (a+b)
+    Plus, IntegerV a, IntegerV b -> IntegerV (a+b)
   | Plus, _, _ ->  raise (Err "Eval Error: plus operator needs int ")
-  | Minus, IntV a, IntV b -> IntV (a - b)
+  | Minus, IntegerV a, IntegerV b -> IntegerV (a - b)
   | Minus, _, _ -> raise (Err "Eval Error: Minus operator needs int")
-  | Times, IntV a, IntV b -> IntV (a * b)
+  | Times, IntegerV a, IntegerV b -> IntegerV (a * b)
   | Times, _, _ -> raise (Err "Eval Error: times operator needs int")
-  | Div, IntV a, IntV b -> if b = 0 then raise (Err "Eval Error: divided by zero") else
-                             IntV (a / b)
+  | Div, IntegerV a, IntegerV b -> if b = 0 then raise (Err "Eval Error: divided by zero") else
+                             IntegerV (a / b)
   | Div, _, _ -> raise (Err "Eval Error: div operator needs int")
-  | And, BoolV a, BoolV b -> BoolV (a && b)
+  | And, BooleanV a, BooleanV b -> BooleanV (a && b)
   | And, _,_ -> raise (Err "Eval Error: && operator needs bool")
-  | Or, BoolV a, BoolV b -> BoolV (a || b)
+  | Or, BooleanV a, BooleanV b -> BooleanV (a || b)
   | Or, _, _ -> raise (Err "Eval Error: || operator needs bool")
-  | Lt, IntV a, IntV b -> BoolV (a < b)
+  | Lt, IntegerV a, IntegerV b -> BooleanV (a < b)
   | Lt, _, _ -> raise (Err "Eval Error: < operator needs int")
-  | Gt, IntV a, IntV b -> BoolV (a > b)
+  | Gt, IntegerV a, IntegerV b -> BooleanV (a > b)
   | Gt, _, _ -> raise (Err "Eval Error: > operator needs int")
 
 let eval_singleop op exp = match op,exp with
-    Not, BoolV a -> BoolV ( not a)
-  | Not, IntV a -> if a = 0 then BoolV (true) else BoolV (false)
+    Not, BooleanV a -> BooleanV ( not a)
+  | Not, IntegerV a -> if a = 0 then BooleanV (true) else BooleanV (false)
 
 let rec eval_exp exp env = match exp with
     Var id ->( try Environment.lookup id env with Err e -> raise (Err ("Eval Error " ^e ^ " : " ^ id)))
-  | IntV a -> IntV a
-  | BoolV a -> BoolV a
+  | IntV a -> IntegerV a
+  | BoolV a -> BooleanV  a
   | BinOp (op, e1, e2) -> let arg1 = eval_exp e1 env in
                                        let arg2 = eval_exp e2 env in
                                        eval_binop op arg1 arg2
@@ -34,8 +40,8 @@ let rec eval_exp exp env = match exp with
                         eval_singleop op arg1
   | IfExp (e1, e2, e3) -> let arg1 = eval_exp e1 env in
                           (match arg1 with
-                             BoolV true -> eval_exp e2 env
-                           | BoolV false -> eval_exp e3 env
+                             BooleanV true -> eval_exp e2 env
+                           | BooleanV false -> eval_exp e3 env
                            | _ -> raise (Err ("The expression must be boolean: if "))
                            )
   | LetExp (id, e1, e2) -> let arg1 = eval_exp e1 env in
@@ -44,7 +50,16 @@ let rec eval_exp exp env = match exp with
                                          let  (nid, nv, newenv2) = eval_anddecl andexp env in
                                          if id = nid then raise (Err "Eval Error: identifier is the same ") else
                                            eval_exp exp2 (Environment.extend id v newenv2)
-
+  | FunExp (id, exp) -> FunctionV (id, exp,env)
+  | AppExp (e1, e2) ->let funval = eval_exp e1 env in
+                      let arg = eval_exp e2 env in
+                      (
+                        match funval with
+                          FunctionV (id, body , env') ->
+                          let newenv = Environment.extend id arg env' in
+                          eval_exp body newenv
+                        | _ -> raise (Err "Eval Error: Non-Function value is applied")
+                      )
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in
                              let newenv = Environment.extend id v env in

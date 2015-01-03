@@ -5,8 +5,8 @@ open Environment
 
 let print_v exp =
   match exp with
-    IntV  i -> print_string ( string_of_int i)
-  | BoolV i -> print_string (string_of_bool i)
+    IntegerV  i -> print_string ( string_of_int i)
+  | BooleanV i -> print_string (string_of_bool i)
 
 let print_ty ty = match ty with
   | TyInt -> print_string "int"
