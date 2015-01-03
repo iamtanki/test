@@ -8,7 +8,8 @@
       ("false", Parser.FALSE);
       ("let", Parser.LET);
       ("in", Parser.IN);
-        ("and", Parser.EAND)
+      ("and", Parser.EAND);
+      ("fun", Parser.FUN);
     ]
 }
 rule main = parse
@@ -32,6 +33,7 @@ rule main = parse
 | "<" { Parser.LT }
 | "==" {Parser.EQ} (* logic eq, not assignment *)
 | "=" { Parser.DEQ} (* assignment *)
+| "->" { Parser.FARROW }
 | "(*" { comments 0 lexbuf  }
 
 | ['a'-'z'] ['a'-'z' '0'-'9' '_' '\'']*
@@ -42,6 +44,7 @@ rule main = parse
       _ -> Parser.ID id
      }
 | eof { exit 0 }
+
 and comments level = parse
     | "*)" { if level = 0 then main lexbuf else comments (level - 1) lexbuf }
     | "(*" { comments (level + 1) lexbuf }

@@ -2,29 +2,29 @@ open Syntax
 
 let eval_binop op e1 e2 = match op , e1, e2 with
     Plus, IntV a, IntV b -> IntV (a+b)
-  | Plus, _, _ ->  raise (Err "Error: plus operator needs int ")
+  | Plus, _, _ ->  raise (Err "Eval Error: plus operator needs int ")
   | Minus, IntV a, IntV b -> IntV (a - b)
-  | Minus, _, _ -> raise (Err "Error: Minus operator needs int")
+  | Minus, _, _ -> raise (Err "Eval Error: Minus operator needs int")
   | Times, IntV a, IntV b -> IntV (a * b)
-  | Times, _, _ -> raise (Err "Error: times operator needs int")
-  | Div, IntV a, IntV b -> if b = 0 then raise (Err "Error: divided by zero") else
+  | Times, _, _ -> raise (Err "Eval Error: times operator needs int")
+  | Div, IntV a, IntV b -> if b = 0 then raise (Err "Eval Error: divided by zero") else
                              IntV (a / b)
-  | Div, _, _ -> raise (Err "Error: div operator needs int")
+  | Div, _, _ -> raise (Err "Eval Error: div operator needs int")
   | And, BoolV a, BoolV b -> BoolV (a && b)
-  | And, _,_ -> raise (Err "Error: && operator needs bool")
+  | And, _,_ -> raise (Err "Eval Error: && operator needs bool")
   | Or, BoolV a, BoolV b -> BoolV (a || b)
-  | Or, _, _ -> raise (Err "Error: || operator needs bool")
+  | Or, _, _ -> raise (Err "Eval Error: || operator needs bool")
   | Lt, IntV a, IntV b -> BoolV (a < b)
-  | Lt, _, _ -> raise (Err "Error: < operator needs int")
+  | Lt, _, _ -> raise (Err "Eval Error: < operator needs int")
   | Gt, IntV a, IntV b -> BoolV (a > b)
-  | Gt, _, _ -> raise (Err "Error: > operator needs int")
+  | Gt, _, _ -> raise (Err "Eval Error: > operator needs int")
 
 let eval_singleop op exp = match op,exp with
     Not, BoolV a -> BoolV ( not a)
   | Not, IntV a -> if a = 0 then BoolV (true) else BoolV (false)
 
 let rec eval_exp exp env = match exp with
-    Var id ->( try Environment.lookup id env with Err e -> raise (Err (e ^ " : " ^ id)))
+    Var id ->( try Environment.lookup id env with Err e -> raise (Err ("Eval Error " ^e ^ " : " ^ id)))
   | IntV a -> IntV a
   | BoolV a -> BoolV a
   | BinOp (op, e1, e2) -> let arg1 = eval_exp e1 env in
@@ -42,7 +42,7 @@ let rec eval_exp exp env = match exp with
                            eval_exp e2 ( Environment.extend id arg1 env)
   | LetAndExp (id, exp, andexp, exp2) -> let v = eval_exp exp env in
                                          let  (nid, nv, newenv2) = eval_anddecl andexp env in
-                                         if id = nid then raise (Err "Error: identifier is the same ") else
+                                         if id = nid then raise (Err "Eval Error: identifier is the same ") else
                                            eval_exp exp2 (Environment.extend id v newenv2)
 
 and  eval_anddecl exp env = match exp with

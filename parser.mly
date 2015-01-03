@@ -10,6 +10,7 @@
 %token LT EQ GT
 %token NOT
 %token LET IN DEQ EAND
+%token FUN FARROW
 
 %token<Syntax.id> ID
 %token <int> INTV
@@ -36,7 +37,8 @@ ANDDecl :
 
 TOPExpr :
      IFExpr { $1 }
-   | LetExpr { $1 }
+    | LetExpr { $1 }
+
 
 LetExpr :
        LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}

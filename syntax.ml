@@ -15,6 +15,8 @@ type exp =
   | IfExp of exp * exp * exp
   | LetExp of id * exp * exp
   | LetAndExp of id * exp * anddecl * exp
+  | FunExp of id * exp
+  | AppExp of exp * exp
  and anddecl =
    SingleAndDecl of id * exp
   | CompAndDecl of id *exp * anddecl

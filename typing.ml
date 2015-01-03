@@ -41,7 +41,7 @@ let rec  ty_exp exp tyenv = match exp with
   |LetAndExp (id, exp, andexp, exp2) -> let v = ty_exp exp tyenv in
                                         let (nid, nv, newtyenv) = ty_anddecl andexp tyenv in
                                         if id = nid then raise (Err "Typing Error: identifier is the same ") else
-                                        ty_exp exp2 newtyenv
+                                          ty_exp exp2 (Environment.extend id v newtyenv)
 
 and ty_anddecl exp tyenv  = match exp with
     SingleAndDecl (id, e) -> let v = ty_exp e tyenv in
