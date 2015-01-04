@@ -10,6 +10,7 @@
       ("in", Parser.IN);
       ("and", Parser.EAND);
       ("fun", Parser.FUN);
+      ("rec", Parser.REC)
     ]
 }
 rule main = parse

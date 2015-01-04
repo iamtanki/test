@@ -16,6 +16,7 @@ type exp =
   | LetAndExp of id * exp * anddecl * exp
   | FunExp of id * exp
   | AppExp of exp * exp
+  | RecExp of id * id * exp * exp
  and anddecl =
    SingleAndDecl of id * exp
   | CompAndDecl of id *exp * anddecl
@@ -25,10 +26,10 @@ type decl =
   | CompDecl of id * exp * decl
   | AndDecl of id * exp * anddecl
 
-
 type program =
     Exp of exp
   | Decl of decl
+  | LetRecDecl of id * id * exp
 
 (* types *)
 type tyexp = TyInt | TyBool

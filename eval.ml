@@ -4,6 +4,7 @@ type exval =
     IntegerV of int
   | BooleanV of bool
   | FunctionV of id * exp * dnval Environment.t
+  | RecFunV of  id * exp * dnval Environment.t ref
  and dnval = exval
 
 let eval_binop op e1 e2 = match op , e1, e2 with
@@ -50,16 +51,25 @@ let rec eval_exp exp env = match exp with
                                          let  (nid, nv, newenv2) = eval_anddecl andexp env in
                                          if id = nid then raise (Err "Eval Error: identifier is the same ") else
                                            eval_exp exp2 (Environment.extend id v newenv2)
-  | FunExp (id, exp) -> FunctionV (id, exp,env)
-  | AppExp (e1, e2) ->let funval = eval_exp e1 env in
+  | FunExp (id, exp) -> FunctionV (id, exp, env)
+   | AppExp (e1, e2) ->let funval = eval_exp e1 env in
                       let arg = eval_exp e2 env in
                       (
                         match funval with
                           FunctionV (id, body , env') ->
                           let newenv = Environment.extend id arg env' in
                           eval_exp body newenv
+                        | RecFunV (id, exp, dummyenv )->
+                           let newenv = Environment.extend id arg ( ! dummyenv) in
+                           eval_exp exp newenv
                         | _ ->   raise (Err "Eval Error: Non-Function value is applied")
                       )
+  | RecExp (id, para, e1, e2) -> let dummyenv = ref Environment.empty in
+                                    let newenv =
+                                      Environment.extend id (RecFunV (para, e1, dummyenv)) env in
+                                    dummyenv := newenv;
+                                    eval_exp e2 newenv
+
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in
                              let newenv = Environment.extend id v env in

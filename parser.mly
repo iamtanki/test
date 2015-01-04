@@ -11,6 +11,7 @@
 %token NOT
 %token LET IN DEQ EAND
 %token FUN FARROW
+%token REC
 
 %token<Syntax.id> ID
 %token <int> INTV
@@ -24,6 +25,10 @@
 startpart :
    TOPExpr SEMISEMI {  Exp $1 }
     | DECL SEMISEMI{ Decl  $1 }
+    | RECDECL SEMISEMI { $1 }
+
+RECDECL :
+     LET REC ID DEQ FUN ID FARROW TOPExpr { LetRecDecl ($3,$6,$8)  }
 
 DECL :
     LET ID DEQ TOPExpr {SingleDecl ($2, $4)}
@@ -38,6 +43,10 @@ TOPExpr :
      IFExpr { $1 }
     | LetExpr { $1 }
     | FunExpr { $1 }
+    | RecExpr { $1 }
+
+RecExpr :
+     LET REC ID DEQ FUN ID FARROW TOPExpr IN TOPExpr { RecExp ($3,$6,$8,$10) }
 
 FunExpr :
    FUN ID FARROW TOPExpr { FunExp ($2,$4) }
