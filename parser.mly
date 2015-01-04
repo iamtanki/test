@@ -42,9 +42,10 @@ TOPExpr :
 FunExpr :
    FUN ID FARROW TOPExpr { FunExp ($2,$4) }
 
-PARALIST :
-    ID { [$1] }
-    | PARALIST ID { $1 @ [$2] }
+/*PARALIST :
+*    ID { [$1] }
+*   | PARALIST ID { $1 @ [$2] }
+*/
 
 LetExpr :
        LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
@@ -78,11 +79,11 @@ MExpr :
     | SExpr { $1 }
 
 SExpr :
-        NOT  AppExpr { SingleOp (Not, $2)}
+        NOT  SExpr { SingleOp (Not, $2)}
     | AppExpr { $1 }
 
 AppExpr :
-        AppExpr VExpr { AppExp ($1, $2) }
+        AppExpr  VExpr { AppExp ($1,$2)}
     | VExpr { $1 }
 
 VExpr :

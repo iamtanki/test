@@ -7,6 +7,7 @@ let print_v exp =
   match exp with
     IntegerV  i -> print_string ( string_of_int i)
   | BooleanV i -> print_string (string_of_bool i)
+  | FunctionV _  -> print_string "<fun>"
 
 let print_ty ty = match ty with
   | TyInt -> print_string "int"
@@ -32,15 +33,15 @@ let rec print_value env tyenv =
     flush stdout;
     let exp = Parser.startpart Lexer.main lb in
     let (s, v , newenv) = eval_program exp env in
-    let (ts, tv, newtyenv) = ty_program exp tyenv in
+    (* let (ts, tv, newtyenv) = ty_program exp tyenv in *)
     print_string  (s ^ " : " ) ;
-    print_ty tv;
+    (* print_ty tv; *)
     print_string " = ";
     print_v v;
     print_newline ();
-    print_value newenv newtyenv
+    print_value newenv Environment.empty
   with
     Err e -> print_string e; print_newline ();     print_value env tyenv
-    | _ -> print_string "Parsing Error: Not Complete";  print_newline ();  print_value env tyenv
+    (* | _ -> print_string "Parsing Error: Not Complete";  print_newline ();  print_value env tyenv *)
 
 let _ = print_value Environment.empty Environment.empty

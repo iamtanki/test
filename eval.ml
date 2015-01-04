@@ -58,7 +58,7 @@ let rec eval_exp exp env = match exp with
                           FunctionV (id, body , env') ->
                           let newenv = Environment.extend id arg env' in
                           eval_exp body newenv
-                        | _ -> raise (Err "Eval Error: Non-Function value is applied")
+                        | _ ->   raise (Err "Eval Error: Non-Function value is applied")
                       )
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in
