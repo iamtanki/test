@@ -18,12 +18,14 @@ type exp =
   | AppExp of exp * exp
   | RecExp of id * id * exp * exp
   | AllocExp of id * exp
+  | DerefExp of  exp
+  | RefAssignExp of exp * exp
  and anddecl =
    SingleAndDecl of id * exp
    | CompAndDecl of id *exp * anddecl
  and 'a pointer = Null | Pointer of 'a ref
- and plist = cell pointer
- and cell = {mutable pcontents : plist}
+ (* and plist = cell pointer *)
+ (* and cell = {mutable pcontents : plist} *)
 
 type decl =
     SingleDecl of id * exp

@@ -3,11 +3,16 @@ open Eval
 open Typing
 open Environment
 
+let rec string_of_cell = function
+                         Null -> "{ contents = Null }"
+                        | Pointer cell -> "{ contents = " ^ (string_of_cell (cell.contents)) ^ "}"
+
 let print_v exp =
   match exp with
     IntegerV  i -> print_string ( string_of_int i)
   | BooleanV i -> print_string (string_of_bool i)
   | FunctionV _  -> print_string "<fun>"
+  | PointerV  a -> print_string ( (string_of_cell a))
 
 let print_ty ty = match ty with
   | TyInt -> print_string "int"

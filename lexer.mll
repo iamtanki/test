@@ -21,7 +21,8 @@ rule main = parse
 
 | "-"? ['0'-'9']+
     { Parser.INTV (int_of_string (Lexing.lexeme lexbuf)) }
-
+| "!^" { Parser.DEREF }
+| "<-" { Parser.REFASSIGN}
 | "(" { Parser.LPAREN }
 | ")" { Parser.RPAREN }
 | ";;" { Parser.SEMISEMI }

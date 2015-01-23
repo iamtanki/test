@@ -1,12 +1,12 @@
 open Syntax
 
-type exval =
+type 'a exval =
     IntegerV of int
   | BooleanV of bool
-  | FunctionV of id * exp * dnval Environment.t
-  | RecFunV of  id * exp * dnval Environment.t ref
-  | PointerV of plist
- and dnval = exval
+  | FunctionV of id * exp * 'a dnval Environment.t
+  | RecFunV of  id * exp * 'a  dnval Environment.t ref
+  | PointerV of 'a pointer
+ and 'a dnval = 'a exval
 
 let eval_binop op e1 e2 = match op , e1, e2 with
     Plus, IntegerV a, IntegerV b -> IntegerV (a+b)
@@ -70,10 +70,22 @@ let rec eval_exp exp env = match exp with
                                       Environment.extend id (RecFunV (para, e1, dummyenv)) env in
                                     dummyenv := newenv;
                                     eval_exp e2 newenv
-  | AllocExp (id, e) -> let cell = {pcontents = Null} in
-                             let b : plist = Pointer (ref cell) in
-                             let newenv =  Environment.extend id (PointerV b) env in
+  | AllocExp (id, e) -> let p = Null in
+                             let newenv =  Environment.extend id (PointerV p) env in
                              eval_exp e newenv
+  | DerefExp (e) -> ( let p = eval_exp e env in
+                     match p with
+                       PointerV cell -> p
+                     | _-> raise (Err "Eval Error: Dereference" ))
+  (* | RefAssignExp (e1, e2) -> let p = eval_exp e1 env in *)
+  (*                            let v = eval_exp e2 env in *)
+  (*                            match v with *)
+
+  (*                            (match p with *)
+  (*                               PointerV cell -> ( match cell with *)
+  (*                                                    Pointer c -> c:= v; p *)
+  (*                                                ) ) *)
+
 
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in

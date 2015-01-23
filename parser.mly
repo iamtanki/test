@@ -94,8 +94,16 @@ SExpr :
     | AppExpr { $1 }
 
 AppExpr :
-        AppExpr  VExpr { AppExp ($1,$2)}
-    | VExpr { $1 }
+        AppExpr  RefAssignExpr { AppExp ($1,$2)}
+    | RefAssignExpr { $1 }
+
+RefAssignExpr :
+    DerefExpr REFASSIGN RefAssignExpr { RefAssignExp ($1, $3)}
+    | DerefExpr { $1 }
+
+DerefExpr :
+        DEREF DerefExpr { DerefExp ($2)}
+    | VExpr { $1}
 
 VExpr :
         INTV  {IntV $1}
