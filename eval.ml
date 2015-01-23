@@ -5,6 +5,7 @@ type exval =
   | BooleanV of bool
   | FunctionV of id * exp * dnval Environment.t
   | RecFunV of  id * exp * dnval Environment.t ref
+  | PointerV of plist
  and dnval = exval
 
 let eval_binop op e1 e2 = match op , e1, e2 with
@@ -69,6 +70,10 @@ let rec eval_exp exp env = match exp with
                                       Environment.extend id (RecFunV (para, e1, dummyenv)) env in
                                     dummyenv := newenv;
                                     eval_exp e2 newenv
+  | AllocExp (id, e) -> let cell = {pcontents = Null} in
+                             let b : plist = Pointer (ref cell) in
+                             let newenv =  Environment.extend id (PointerV b) env in
+                             eval_exp e newenv
 
 and  eval_anddecl exp env = match exp with
     SingleAndDecl (id, e) -> let v = eval_exp e  env in

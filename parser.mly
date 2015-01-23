@@ -12,10 +12,11 @@
 %token LET IN DEQ EAND
 %token FUN FARROW
 %token REC
+%token MALLOC FREE DEREF REFASSIGN
 
 %token<Syntax.id> ID
 %token <int> INTV
-%token <bool> BOOLV
+// %token <bool> BOOLV
 
 %start startpart
 %type <Syntax.program> startpart
@@ -58,7 +59,8 @@ FunExpr :
 
 LetExpr :
        LET ID DEQ TOPExpr IN TOPExpr {LetExp ($2, $4, $6)}
-   | LET ID DEQ TOPExpr ANDDecl IN TOPExpr { LetAndExp ($2, $4, $5, $7)}
+    | LET ID DEQ TOPExpr ANDDecl IN TOPExpr { LetAndExp ($2, $4, $5, $7)}
+    | LET ID DEQ MALLOC IN TOPExpr {AllocExp ($2, $6)}
 
 IFExpr :
     IF IFExpr THEN IFExpr ELSE IFExpr {IfExp ($2, $4,$6)}
