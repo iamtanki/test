@@ -4,8 +4,13 @@ open Typing
 open Environment
 
 let rec string_of_cell = function
-                         Null -> "{ contents = Null }"
-                        | Pointer cell -> "{ contents = " ^ (string_of_cell (cell.contents)) ^ "}"
+   Pcons (Pcons tl as cell)  ->"{ contents = " ^ (string_of_cell (cell) ^ "}"
+   | Pcons (tl) -> ( match tl.contents with
+       BooleanV i -> "{ contents = "^ (string_of_bool i) ^ "}"
+       | IntegerV i -> " { contents = "^(string_of_int i)^"}"
+       | _ -> " { contents = anything }" )
+   | Nil -> "{ contents = Null}"
+
 
 let print_v exp =
   match exp with

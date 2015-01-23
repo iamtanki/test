@@ -23,9 +23,7 @@ type exp =
  and anddecl =
    SingleAndDecl of id * exp
    | CompAndDecl of id *exp * anddecl
- and 'a pointer = Null | Pointer of 'a ref
- (* and plist = cell pointer *)
- (* and cell = {mutable pcontents : plist} *)
+ and 'a plist = Nil | Pcons of 'a ref
 
 type decl =
     SingleDecl of id * exp
